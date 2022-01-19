@@ -20,15 +20,16 @@ app.set('view engine', 'ejs');
 // Define un endpoint a la URL '/', método GET, y ejecutrá la función de callback del segundo parámetro cada vez que reciba una petición
 
 app.get('/', function (req, res) {
-    res.render("index", {
+    res.render("pages/index", {
         numFotos: fotos.length,
         saluda: "HOLA!",
         fotos: fotos
     });
+    console.log(res)
 })
 
 app.get('/nueva-foto', (req, res) => {
-    res.sendFile(__dirname + "/form.html");
+    res.render("pages/form");
 });
 
 // endpoint recibir peticiones de tipo POST a '/nueva-foto'; y de momento, simplemente hacer un console.log del objeto req.body
