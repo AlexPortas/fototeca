@@ -12,10 +12,12 @@
     <ul>
         <% fotos.forEach(function(foto) { %>
             <li>
-                <strong>
-                    <%= foto.titulo %> - <%= foto.fecha %>
-                </strong>
-
+                <div>
+                    <img class="foto" src="<%= foto.url %>" alt="<%= foto.titulo %>">
+                    <strong>
+                        <%= foto.titulo %> - <%= foto.fecha %>
+                    </strong>
+                </div>
             </li>
             <% }); %>
     </ul>

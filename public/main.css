@@ -2,18 +2,20 @@ h1 {
   color: green;
 }
 
+.foto {
+  width: 200px;
+}
+
 #menu .enlaceMenu{
   text-decoration:none;
-  color:inherit;
   font-size:14px;
+  color:inherit;
 } 
 
 #menu .objetoLista{
   display:inline-block;
-  width:10%;
   padding:5px 10px;
-  background-color:#000;
-  border:1px solid #000;
+  background-color:#000; 
   text-align:center;
   color:#fff;
 }
@@ -21,4 +23,15 @@ h1 {
 #menu .objetoLista:hover{
   background-color:#fff;
   color:#000;
+}
+
+#menu {
+  background: blueviolet;
+  position: initial;
+  padding: 10px;
+}
+
+#nombreApp, #menu ul{
+  display: inline-block;
+  color:#fff;
 }

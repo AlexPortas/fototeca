@@ -22,33 +22,71 @@ app.set('view engine', 'ejs');
 app.get('/', function (req, res) {
     res.render("pages/index", {
         numFotos: fotos.length,
-        saluda: "HOLA!",
-        fotos: fotos
+        fotos
     });
-    console.log(res)
+    console.log("req.body en raiz:",req.body);
 })
 
 app.get('/nueva-foto', (req, res) => {
-    res.render("pages/form");
+    res.render("pages/form", {
+        error: "",
+        info: ""
+    });
+    console.log("req.body:",req.body);
 });
 
 // endpoint recibir peticiones de tipo POST a '/nueva-foto'; y de momento, simplemente hacer un console.log del objeto req.body
 app.post('/nueva-foto', (req, res) => {
     // 1 Crear un nuevo objeto que almacene los campos de la foto
-    console.log(req.body);
+    console.log("cuerpo de req:",req.body);
     let foto = {
         titulo: req.body.nombre,
         url: req.body.url,
         fecha: req.body.fecha
     }
-    console.log(foto);
+
+    let fotoExiste = existeFotoBBDD(req.body.url);
+    if (fotoExiste) {
+        // Devolver al usuario a la página del formularo indicándole que la URL ya existe
+        res.render("pages/form", {
+            error: `La URL ${req.body.url} ya existe.`
+        })
+
+        return; // debo salir de la función para no ejecutar más código
+    }
 
     // 2 Añadir el objeto al array fotos
     fotos.push(foto);
 
     // 3. REspondar el cliente con un mensaje simple diciendo el número de foto que hay subidas hasta el momento
-    res.status(201).send(`Foto subido correctamente!!`);
+    res.status(201).render("pages/form", {
+        info: `Imagén subida correctamente`
+    });
 });
 
+
+/**
+ * Función que determina si existe una foto en la base de datos 'fotos'
+ * 
+ * @param {string} url URL de la foto que quieres comprobar
+ */
+// function existeFotoBBDD(url) {
+//     let existeFoto = false;
+//     let i = 0;
+
+//     while (!existeFoto && i < fotos.length) {
+//         existeFoto = fotos[i].url == url;
+//         i++;
+//     }
+
+//     return existeFoto;
+// }
+
+function existeFotoBBDD(url) {
+
+    let encontrado = fotos.some(foto => url == foto.url)
+
+    return encontrado;
+}
 
 app.listen(3000);

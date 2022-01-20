@@ -7,16 +7,28 @@
 
 <body>
     <%- include('../partials/menu'); %>
-    <form action="/nueva-foto" method="post">
-        <label for="nombre">Título de la foto</label>
-        <input type="text" name="nombre" id="nombre">
-        <label for="url">URL de la foto:</label>
-        <input type="url" name="url" id="url">
-        <label for="fecha">Fecha</label>
-        <input type="date" name="fecha" id="fecha">
+        <form action="/nueva-foto" method="post">
+            <label for="nombre">Título de la foto</label>
+            <input type="text" name="nombre" id="nombre">
+            <label for="url">URL de la foto:</label>
+            <input type="url" name="url" id="url">
+            <label for="fecha">Fecha</label>
+            <input type="date" name="fecha" id="fecha">
 
-        <input type="submit" value="Añadir Foto">
-    </form>
+            <input type="submit" value="Añadir Foto">
+        </form>
+
+        <% if (typeof info != 'undefined') { %>
+            <p id="info">
+                <%= info                             %>
+            </p>
+            <% } %>
+            
+        <% if (typeof error != 'undefined') { %>
+            <p style="color:red">
+                <%= error %>
+            </p>
+            <% } %>
 </body>
 
 </html>
