@@ -1,11 +1,32 @@
 // Importamos la biblioteca de terceros 'express'
 const express = require('express');
 
+// import getColorFromURL function from color-thief-node
+const { getColorFromURL } = require('color-thief-node');
+
 // Crear una nueva instancia del objeto Express
 const app = express();
 
 // "Base de datos" de las fotos que me han subido al servidor
-let fotos = [];
+let fotos =  [{
+             titulo: 'Bosque',
+             url: 'https://i.picsum.photos/id/260/200/200.jpg?hmac=Nu9V4Ixqq3HiFhfkcsL5mNRZAZyEHG2jotmiiMRdxGA',
+             fecha: '2012-01-14',
+             color: '150,95,25'
+         },
+         {
+             titulo: 'Faro',
+             url: 'https://i.picsum.photos/id/870/200/300.jpg?blur=2&grayscale&hmac=ujRymp644uYVjdKJM7kyLDSsrqNSMVRPnGU99cKl6Vs',
+             fecha: '2022-01-12',
+             color: '24,78,122'
+         },
+         {
+             titulo: 'Montaña',
+             url: 'https://i.picsum.photos/id/866/200/300.jpg?hmac=rcadCENKh4rD6MAp6V_ma-AyWv641M4iiOpe1RyFHeI',
+             fecha: '2021-01-01',
+             color: '80,0,100'
+         }
+     ];
 
 // Si te vienen peticiones POST; procesalas adecuadamente (enriquece el objeto req con la propiedad body)
 app.use(express.urlencoded({ extended: false }))
@@ -22,46 +43,53 @@ app.set('view engine', 'ejs');
 app.get('/', function (req, res) {
     res.render("pages/index", {
         numFotos: fotos.length,
-        fotos
+        fotos,
+        path: req.route.path
     });
+    console.log("fotos:",fotos);
     console.log("req.body en raiz:",req.body);
 })
 
 app.get('/nueva-foto', (req, res) => {
     res.render("pages/form", {
         error: "",
-        info: ""
+        path: req.route.path
     });
     console.log("req.body:",req.body);
 });
 
 // endpoint recibir peticiones de tipo POST a '/nueva-foto'; y de momento, simplemente hacer un console.log del objeto req.body
-app.post('/nueva-foto', (req, res) => {
+app.post('/nueva-foto', async (req, res) => {
     // 1 Crear un nuevo objeto que almacene los campos de la foto
     console.log("cuerpo de req:",req.body);
-    let foto = {
-        titulo: req.body.nombre,
-        url: req.body.url,
-        fecha: req.body.fecha
-    }
 
     let fotoExiste = existeFotoBBDD(req.body.url);
     if (fotoExiste) {
         // Devolver al usuario a la página del formularo indicándole que la URL ya existe
         res.render("pages/form", {
-            error: `La URL ${req.body.url} ya existe.`
+            error: `La URL ${req.body.url} ya existe.`,
+            path: req.route.path
         })
 
         return; // debo salir de la función para no ejecutar más código
     }
+    
+   let color = await obtenerColorPredominante(req.body.url);
 
+    let foto = {
+        titulo: req.body.nombre,
+        url: req.body.url,
+        fecha: req.body.fecha,
+        color
+    }
     // 2 Añadir el objeto al array fotos
     fotos.push(foto);
 
-    // 3. REspondar el cliente con un mensaje simple diciendo el número de foto que hay subidas hasta el momento
-    res.status(201).render("pages/form", {
-        info: `Imagén subida correctamente`
-    });
+    // Ordenamos el array de fotos 
+    ordenarFechaDecreciente(fotos);
+
+    // 3. Si todo va bien redirijimos a raiz
+    res.redirect("/");
 });
 
 
@@ -87,6 +115,27 @@ function existeFotoBBDD(url) {
     let encontrado = fotos.some(foto => url == foto.url)
 
     return encontrado;
+}
+
+async function obtenerColorPredominante(url) {
+    return await getColorFromURL(url);
+}
+
+function ordenarFechaDecreciente(fotos) {
+    fotos.sort((foto1, foto2) => {
+        // Si la fecha de la foto1 es mayor que la fecha de la foto2 (es más actual); debería ir más al principio
+        // Más al principio significa que tenemos que devolver un número negativo (-1)
+
+        if (foto1.fecha > foto2.fecha) {
+            return -1;
+        }
+
+        if (foto1.fecha < foto2.fecha) {
+            return 1;
+        }
+
+        return 0;
+    });
 }
 
 app.listen(3000);

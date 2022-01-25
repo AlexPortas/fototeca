@@ -6,6 +6,11 @@ h1 {
   width: 200px;
 }
 
+.enlaceResaltado{
+  font-size: 20px!important;
+  font-weight: bold;
+}
+
 #menu .enlaceMenu{
   text-decoration:none;
   font-size:14px;
@@ -34,4 +39,20 @@ h1 {
 #nombreApp, #menu ul{
   display: inline-block;
   color:#fff;
+}
+
+/*  Maquetación y otros estilos del formulario  */
+ 
+.filaForm{
+padding: 8px 0;
+border-top: 1px solid #000;
+}
+ 
+form label{
+font-weight: bold;
+margin-right: 10px;
+}
+ 
+input[type="submit"]{ /*ancho de las cajas de texto*/
+width: 255px;
 }

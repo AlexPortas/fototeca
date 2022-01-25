@@ -2,10 +2,10 @@
   <h3 id="nombreApp">Fototeca</h3>
   <ul>
     <li class="objetoLista">
-      <a class="enlaceMenu" href="/">Inicio</a>
+      <a class="enlaceMenu<%= (path == '/')? ' enlaceResaltado' :''%>" href="/">Mostrar imagenes</a>
     </li>
     <li class="objetoLista">
-      <a class="enlaceMenu" href="/nueva-foto">Añadir imagén</a>
+      <a class="enlaceMenu<%= (path == '/nueva-foto')? ' enlaceResaltado' :''%>" href="/nueva-foto">Añadir imagén</a>
     </li>
   </ul>
 </nav>

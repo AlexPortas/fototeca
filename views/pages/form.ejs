@@ -8,22 +8,23 @@
 <body>
     <%- include('../partials/menu'); %>
         <form action="/nueva-foto" method="post">
-            <label for="nombre">Título de la foto</label>
-            <input type="text" name="nombre" id="nombre">
-            <label for="url">URL de la foto:</label>
-            <input type="url" name="url" id="url">
-            <label for="fecha">Fecha</label>
-            <input type="date" name="fecha" id="fecha">
-
-            <input type="submit" value="Añadir Foto">
+            <div class="filaForm">
+                <label for="nombre">Título de la foto</label>
+                <input type="text" name="nombre" id="nombre" maxlength="10" required>
+            </div>
+            <div class="filaForm">
+                <label for="url">URL de la foto:</label>
+                <input type="url" name="url" id="url" required>
+            </div>
+            <div class="filaForm">
+                <label for="fecha">Fecha</label>
+                <input type="date" name="fecha" id="fecha" required>
+            </div>
+            <div class="filaForm">
+                <input type="submit" value="Añadir Foto">
+            </div>
         </form>
 
-        <% if (typeof info != 'undefined') { %>
-            <p id="info">
-                <%= info                             %>
-            </p>
-            <% } %>
-            
         <% if (typeof error != 'undefined') { %>
             <p style="color:red">
                 <%= error %>
