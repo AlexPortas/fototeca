@@ -1,52 +1,36 @@
-// "Base de datos" de las fotos que me han subido al servidor
-let fotos =  [{
-    titulo: 'Bosque',
-    url: 'https://i.picsum.photos/id/260/200/200.jpg?hmac=Nu9V4Ixqq3HiFhfkcsL5mNRZAZyEHG2jotmiiMRdxGA',
-    fecha: '2012-01-14',
-    color: '150,95,25'
-},
-{
-    titulo: 'Faro',
-    url: 'https://i.picsum.photos/id/870/200/300.jpg?blur=2&grayscale&hmac=ujRymp644uYVjdKJM7kyLDSsrqNSMVRPnGU99cKl6Vs',
-    fecha: '2022-01-12',
-    color: '24,78,122'
-},
-{
-    titulo: 'Montaña',
-    url: 'https://i.picsum.photos/id/866/200/300.jpg?hmac=rcadCENKh4rD6MAp6V_ma-AyWv641M4iiOpe1RyFHeI',
-    fecha: '2021-01-01',
-    color: '80,0,100'
-}
-];
+// Definir el esquema de esta entidad
 
-ordenarFechaDecreciente(fotos);
+const mongoose = require('mongoose');
 
-exports.añadirNuevaImagen = (titulo, url, fecha, color) => {
+const imagenSchema = new mongoose.Schema({
+    titulo: {
+        type: String,
+        required: true,
+        maxlength: 10
+    },
+    url: {
+        type: String,
+        required: true,
+        validate: {
+            validator: function (url) {
+                return /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/.test(url);
+            }
+        }
+    },
+    fecha: {
+        type: Date,
+        required: true
+    },
+    color: mongoose.Schema.Types.Mixed
+    // color: [] <-- Esto es tipo Mixed igualmente
+});
 
-    let imagen = {
-        titulo,
-        url,
-        fecha,
-        color
-    };
+Imagen = mongoose.model('imagenes', imagenSchema);
 
-    fotos.push(imagen);
-
-    ordenarFechaDecreciente(fotos);
-};
-
-exports.existeImagenBBDD = (url) => {
-
-    let encontrado = fotos.some(foto => url == foto.url)
-
-    return encontrado;
-};
-
-exports.obtenerImagenes = () => {
-    return fotos;
-};
+module.exports = Imagen
 
 
+/*
 function ordenarFechaDecreciente(fotos) {
     fotos.sort((foto1, foto2) => {
         // Si la fecha de la foto1 es mayor que la fecha de la foto2 (es más actual); debería ir más al principio
@@ -60,4 +44,4 @@ function ordenarFechaDecreciente(fotos) {
         }
         return 0;
     });
-}
+}*/

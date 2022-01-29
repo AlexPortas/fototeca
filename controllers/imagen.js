@@ -1,11 +1,19 @@
 // import getColorFromURL function from color-thief-node
 const { getColorFromURL } = require('color-thief-node');
 
-const { añadirNuevaImagen, existeImagenBBDD, obtenerImagenes } = require('../models/imagen');
+const Imagen = require('../models/imagen');
 
-exports.getAllImages = function (req, res) {
+exports.getAllImages = async function (req, res) {
 
-    let fotos = obtenerImagenes();
+    const fechaOrden = req.query.fechaOrden
+    let ordenacion = {"fecha": -1}
+
+    if (fechaOrden == "asc"){
+        ordenacion = {"fecha": 1}
+    }
+    
+    //let fotos = obtenerImagenes();
+    let fotos = await Imagen.find().sort(ordenacion);
     
     res.render("pages/index", {
         fotos, // si la propiedad del objeto y el valor de donde la obtienes se llaman igual; no hace falta fotos:fotos
@@ -34,7 +42,8 @@ exports.postNewImage = async (req, res) => {
 
     let { nombre: titulo, url, fecha } = req.body;
 
-    if (existeImagenBBDD(url)) {
+    const fotoExiste = await Imagen.findOne({ "url": url });
+    if (fotoExiste) {
         // Devolver al usuario a la página del formularo indicándole que la URL ya existe
         res.status(409).render("pages/form", {
             error: `La URL ${req.body.url} ya existe.`,
@@ -43,10 +52,25 @@ exports.postNewImage = async (req, res) => {
 
         return; // debo salir de la función para no ejecutar más código
     }
-
+    
     let color = await obtenerColorPredominante(req.body.url);
 
-    añadirNuevaImagen(titulo, url, fecha, color);
+    const imagen = new Imagen({
+        titulo,
+        url,
+        fecha,
+        color
+    });
+
+    let resultado;
+    try {
+        resultado = await imagen.save();
+    }
+    catch (error) {
+        console.log(error); // enviar un correo a develop@altia.com con lo que ha pasado
+        res.send("Algo ha ido mal al insertar la foto...prueba más tarde.");
+        return;
+    }
 
     // 3. Redirigimos al usuario a la lista de imágenes
     res.redirect('/');

@@ -7,7 +7,10 @@
 
 <body>
     <%- include('../partials/menu'); %>
-
+    <div id="ordenacionFotos">
+        <a href="/?fechaOrden=asc">Ordenar por fecha creciente</a>
+        <a href="/?fechaOrden=dec">Ordenar por fecha decreciente</a>
+    </div>
     <ul>
         <% fotos.forEach(function(foto) { %>
             <li>
